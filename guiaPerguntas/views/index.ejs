@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+<body>
+<%- include('partials/navbar') %>
+
+<div class="container">
+    <hr>
+    <h1>Perguntas</h1>
+    <hr>
+    <a href="/perguntar" class="btn btn-primary">Perguntar</a>
+    <hr>
+
+    <% if (perguntas && perguntas.length > 0) { %>
+        <% perguntas.forEach(pergunta => { %>
+            <div class="card my-3">
+                <div class="card-body">
+                    <h3><%= pergunta.titulo %></h3>
+                    <p><%= pergunta.descricao %></p>
+                </div>
+                <div class="card-footer">
+                    <a href="/pergunta/<%= pergunta.id %>" class="btn btn-primary">Responder</a>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>Não há perguntas cadastradas.</p>
+    <% } %>
+
+</div>
+</body>
+<%- include('partials/footer') %>
