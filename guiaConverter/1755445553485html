@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela</title>
+</head>
+<body>
+    <table>
+        <thead>
+         
+            <th>Nome,Curso,Categoria,Tipo</th>
+          
+        </thead>
+        <tbody>
+            
+                <tr>
+                    
+                        <td>Victor Lima,Formação Node.Js,Node.Js,1</td>
+                    
+                </tr>
+            
+                <tr>
+                    
+                        <td>Lima Victor,Formação React, React.Js,2</td>
+                    
+                </tr>
+            
+                <tr>
+                    
+                        <td>João Victor,Formação Angular, Angular,3</td>
+                    
+                </tr>
+            
+        </tbody>
+    </table>
+</body>
+</html>
