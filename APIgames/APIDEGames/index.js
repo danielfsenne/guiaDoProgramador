@@ -2,10 +2,34 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const cors = require("cors")
+const jwt = require('jsonwebtoken')
+
+const jwtSecret = "uvhivbovubrevu"
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+
+function auth(req, res, next){
+    const authToken = req.headers['authorization']
+    if(authToken != undefined){
+        const bearer = authToken.split('')
+        var token = bearer[1]
+        jwt.verify(token, jwtSecret,(err, data) => {
+            if(err){
+                res.status(401)
+                res.json({err: "Token Inválido"})
+            }else{
+                req.token = token
+                req.user = {id: data.id, email: data.email}
+                next()
+            }
+        })
+    }else{
+        res.status(401)
+        res.json({err: 'Token Inválido'})
+    }
+}
 
 var DB = {
     games: [
@@ -33,10 +57,23 @@ var DB = {
             year: 2023,
             price: 160
         }
+    ],
+    users: [
+        {
+            id: 1,
+            name: 'Daniel',
+            email: 'danielsenne@gmail.com',
+            password: 1234
+        },{
+            id: 20,
+            name: "Tralalelo",
+            email: 'tralalelo@gmail.com',
+            password: 4321
+        }
     ]
 }
 
-app.get("/games", (req, res) => {
+app.get("/games",auth,(req, res) => {
     res.status(200).json(DB.games)
 })
 
@@ -108,6 +145,41 @@ app.put("/game/:id", (req, res) => {
         } else {
             res.sendStatus(404)
         }
+    }
+})
+
+app.post("/auth", (req, res) => {
+    var{email, password} = req.body
+    if(email == undefined){ 
+        var user = DB.users.find(u => u.email == email)
+
+        if(user != undefined){
+            if(user.password == password){
+                jwt.sign({id: user.id, email: user.email}, jwtSecret,{expiresIn: '48h'},(err, token) => {
+                    if(err){
+                        res.status(400)
+                        res.json("Falha interna")
+                    }else{
+                        res.status(200)
+                        res.json({token: token})
+                    }
+                })
+
+                res.status(200)
+                res.json({token: "Token Falso"})
+            }else{
+                res.status(401)
+                res.json({err: 'Erro nas credenciais'})
+            }
+        }else{
+            res.status(404)
+            res.json({err:'email enviado não existe na base de dados'})
+
+        }
+
+    }else{
+        res.status(400)
+        res.json({err: 'email enviado inválido'})
     }
 })
 
