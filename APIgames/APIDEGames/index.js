@@ -48,7 +48,7 @@ var DB = {
 };
 
 app.get("/games", auth, (req, res) => {
-    res.status(200).json(DB.games);
+    res.status(200).json({games: DB.games, _links: HATEOS});
 });
 
 app.get("/game/:id", auth, (req, res) => {
@@ -56,10 +56,32 @@ app.get("/game/:id", auth, (req, res) => {
         return res.status(400).json({err: "ID inválido"});
     }
     var id = parseInt(req.params.id);
+     var HATEOS = [
+        {
+            href: "http://localhost:4567/game/"+id,
+            method: 'DELETE',
+            rel: 'delete_game'
+        },
+        {
+            href: "http://localhost:4567/game/"+id,
+            method: 'PUT',
+            rel: 'edit_game'
+        },
+        {
+            href: 'http://localhost:4567/game/'+id,
+            method:"GET",
+            rel: 'get_game'
+        },
+        {
+            href: 'http://localhost:4567/games',
+            method: 'GET',
+            rel: "get_all_games"
+        }
+    ]
     var game = DB.games.find(g => g.id === id);
 
     if(game){
-        res.status(200).json(game);
+        res.status(200).json({game,_links: HATEOS});
     }else{
         res.status(404).json({err: "Game não encontrado"});
     }
