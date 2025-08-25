@@ -45,3 +45,18 @@ database.select().table("games").orderBy("price", "desc").then( data => {
 }).catch(err => {
     console.log(err)
 })
+
+database.insert({
+    name: "Blizzard",
+    game_id: 5
+}).table("estudios").then(data => {
+    console.log(data)
+}).catch(err => {
+    console.log(err)
+})
+
+database.select().table(["games.*","estudios.name as estudio_name"]).innerJoin("estudios","estudios.game_id","games.id").where("games.id",5).then(data => {
+    console.log(data)
+}).catch(err => {
+    console.log(err)
+})
