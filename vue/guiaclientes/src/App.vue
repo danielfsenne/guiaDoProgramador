@@ -1,34 +1,91 @@
-
 <template>
   <div id="app">
-    <h1>Guia do programador</h1>
-    <input type="text" v-model="nomeDoDaniel">
-    <ClientePage :nome="nomeDoDaniel" email="tuntuntun@gmail" idade="35" :showIdade="true"/>
-    <ClientePage nome="James da Salada de Fruta"  email="tuntuntun1@gmail" idade="30" showIdade="false"/>
-    <ClientePage nome="Tralalelo Tralala"  email="tuntuntun2@gmail" idade="67" :showIdade="false"/>
-    <ClientePage nome="Tuntuntun Sauhr"  email="tuntuntun3@gmail" idade="23" :showIdade="true"/>
-    <ClientePage nome="Bombardile Crocodile"  email="tuntuntun5@gmail" idade="344" :showIdade="true"/>
+    <div class="buttons">
+      <button class="button is-primary">Primary</button>
+      <button class="button is-link">Link</button>
+    </div>
+
+    <h3>Cadastro: </h3>
+    <small id="nomeErro" v-show="deuErro">O nome é inválido, tente novamente!</small><br>
     
+    <input type="text" placeholder="nome" v-model="nomeField" /> <br>
+    <input type="email" placeholder="email" v-model="emailField" /> <br>
+    <input type="number" placeholder="idade" v-model="idadeField" /> <br>
+    
+    <button @click="cadastrarUsuario">Cadastrar</button>
+    <hr>
+    
+    <div v-for="(cliente, index) in orderClientes" :key="cliente.id">
+      <h4>{{ index + 1 }}</h4>
+      <!-- Nome do componente corrigido -->
+      <ClientePage :cliente="cliente" @meDelete="deletarUsuario($event)" />
+    </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash';
 import ClientePage from './components/ClientePage.vue';
-//import ProdutoPage from './components/ProdutoPage.vue';
+
 export default {
   name: 'App',
   data() {
     return {
-      nomeDoDaniel: "D.Flausino Senne"
+      deuErro: false,
+      nomeField: "",
+      emailField: "",
+      idadeField: 0,
+      clientes: [
+        {
+          id: 2,
+          nome: "Victor Lima",
+          email: "victor@lima.com",
+          idade: 99
+        },
+        {
+          id: 22,
+          nome: "Michael Scott",
+          email: "michael@lima.com",
+          idade: 45
+        }
+      ]
     }
   },
-  components:{
-    ClientePage,
-    // ProdutoPage
+  components: {
+    ClientePage
+  },
+  methods: {
+    cadastrarUsuario() {
+      if (this.nomeField.trim().length < 3) {
+        this.deuErro = true;
+      } else {
+        this.clientes.push({
+          id: Date.now(),
+          nome: this.nomeField,
+          email: this.emailField,
+          idade: this.idadeField
+        });
+        this.nomeField = "";
+        this.emailField = "";
+        this.idadeField = 0;
+        this.deuErro = false;
+      }
+    },
+    deletarUsuario($event) {
+      const id = $event.idDoCliente;
+      this.clientes = this.clientes.filter(cliente => cliente.id !== id);
+    }
+  },
+  computed: {
+    orderClientes() {
+      return _.orderBy(this.clientes, ['nome'], ['asc']);
+    }
   }
 }
 </script>
-  
-<style>
 
+<style>
+#nomeErro {
+  color: red;
+}
 </style>
