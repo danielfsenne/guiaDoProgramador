@@ -1,4 +1,8 @@
 var User = require("../models/User")
+var PasswordToken = require("../models/PasswordToken")
+var bcrypt = require("bcrypt")
+
+
 class UserController{
     async index(req, res){
         var users = await User.findAll()
@@ -39,5 +43,83 @@ class UserController{
         res.status(200)
         req.send("Pegando o corpo da requisição")
     }
+
+    async edit(req, res){
+        var {id, name, role, email} = req.body
+        var result =  await User.update(id,email,name,role)
+        if(result != undefined){
+            if(result.status){
+                res.send("Tudo Ok")
+            }else{
+                res.status(406)
+                res.send(result.err)
+            }
+        }else{
+            res.status(406)
+            res.send("Ocorreu um erro no servidor")
+        }
+    }
+
+    async remove(req, res){
+        var id = req.params.id
+
+       var result = await User.delete(id)
+       if(result.status){
+            res.status(200)
+            res.send("Tudo OK")
+       }else{
+        res.status(406)
+        res.send(result.err)
+       }
+    }
+
+    async recoverPassword(req, res){
+       var email = req.body.email
+       var result =  await PasswordToken.create(email)
+       if(result.status){
+            console.log(result.token)
+            res.status(400)
+            res.send("" + result.token)
+       }else{
+        res.status(406)
+        res.send(result.err)
+       }
+    }
+
+    async changePassword(req, res){
+        var token = req.body.token
+        var password = req.body.password
+
+        var isTokenValid = await PasswordToken.validate(token)
+        if(isTokenValid.status){
+            await User.changePassword(password,isTokenValid.token.user_id, isTokenValid.token.token)
+            res.status(200)
+            res.send("Senha alterada")
+        }else{
+            res.status(406)
+            res.send("Token Inváilido")
+        }
+    }
+
+    async login(req,res){
+        var {email, password} = req.body
+        var user = await User.findByEmail(email)
+        if(user != undefined){
+            var resultado = await bcrypt.compare(password,user.password)
+            if(resultado){
+                var token = jwt.sing({email: user.email, role: user.role}, secret)
+                res.status(200)
+                res.json({token: token})
+            }else{
+                res.status(406)
+                res.send("Senha incorreta")
+            }
+            res.json({status: resultado})
+        }else{
+            res.json({status: false})
+
+        }
+    }
+
 }
 module.exports = new UserController()
