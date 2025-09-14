@@ -1,7 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Vue from 'vue'
+import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LoginView from '@/views/LoginView.vue'
+import UsersView from '@/views/UsersView.vue'
+
+Vue.use(VueRouter)
 
 const routes = [
   {
@@ -19,6 +24,19 @@ const routes = [
     name: 'Login',
     component: LoginView
   },
+  {
+    path: '/users',
+    name: 'Users',
+    component: UsersView,
+    beferoEnter: (to, from, next) => {
+      if(localStorage.getItem('token') != undefined){
+        next()
+      }else{
+        next("/login")
+      }
+    }
+  },
+
   {
     path: '/about',
     name: 'about',
