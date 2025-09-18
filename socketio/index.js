@@ -11,20 +11,15 @@ app.get("/", (req, res) => {
 })
 
 io.on("connection", (socket) => {
-
     socket.on("disconnect", () => {
         console.log("X desconectou:" + socket.id)
     })
-
-    socket.on("boasvindas", (data) => {
+  
+    socket.on("msg", (data) => {
+        socket.broadcast.emit("")
+        io.emit("showmsg", data)
         console.log(data)
     })
-
-    socket.on("palavra", (data) => {
-        console.log(data)
-        socket.emit("resultado", data + " - Guia do Programador")
-    })
-
 })
 http.listen(3036, () => {
     console.log("app rodando")
