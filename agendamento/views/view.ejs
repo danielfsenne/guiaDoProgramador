@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="main.css">
-    <script src="../public/dist/index.global.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
+
     <title>Sistema</title>
 </head>
 <body>
@@ -14,7 +15,8 @@
     var element = document.getElementById('calendar')
     var calendar = new FullCalendar.Calendar(element, {
         initialView: 'dayGridMonth',
-        locale: 'pt-br'
+        locale: 'pt-br',
+        event: 'getcalendar'
     })
     calendar.render()
 </script>

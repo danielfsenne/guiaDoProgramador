@@ -10,4 +10,4 @@ const appointment = new mongoose.Schema({
     finished: Boolean 
 })
 
-module.exports = appointment
+module.exports =  appointment
