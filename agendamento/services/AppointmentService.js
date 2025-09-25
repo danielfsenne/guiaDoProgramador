@@ -39,6 +39,35 @@ class AppointmentService {
             return appointments
         }
     }
+
+    async GetById(id){
+        try{
+          var event = await AppoModel.findOne({'_id': id})
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+    async Finish(id){
+        try{
+            await AppoModel.findByIdAndUpdate(id, {finished: true})
+        return true
+        }catch(err){
+            console.log(err)
+        return false
+        }
+    }
+
+    async Search(query){
+        try{
+            var appos = await AppoModel.find().or([{email: query}, {cpf: query}])
+            return appos
+        }catch(err){
+            console.log(err)
+            return []
+        }
+    }
+
 }
 
 module.exports = new AppointmentService()
